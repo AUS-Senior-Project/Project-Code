@@ -1,4 +1,4 @@
-VideoPath	Label
+video_path	label
 Dataset\FallDetection\Falling\FDF1	fall
 Dataset\FallDetection\Falling\FDF2	fall
 Dataset\FallDetection\Falling\FDF3	fall

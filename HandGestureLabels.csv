@@ -1,4 +1,4 @@
-VideoPath	Label	UserID
+video_path	label	user_id
 Dataset\HandGesture\CurtainGesture\Hamad\CGH1	curtain	hamad	
 Dataset\HandGesture\CurtainGesture\Hamad\CGH2	curtain	hamad	
 Dataset\HandGesture\CurtainGesture\Hamad\CGH3	curtain	hamad	
