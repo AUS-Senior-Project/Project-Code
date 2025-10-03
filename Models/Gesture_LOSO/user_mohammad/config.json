@@ -1,0 +1,19 @@
+{
+  "dataset": "Gesture_LOSO",
+  "holdout_user": "mohammad",
+  "seed": 42,
+  "feature_dim": 2560,
+  "hidden_dim": 512,
+  "dropout": 0.3,
+  "epochs": 30,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "apply_standardize": true,
+  "apply_l2": false,
+  "classes": [
+    "curtain",
+    "fan",
+    "light",
+    "screen"
+  ]
+}
