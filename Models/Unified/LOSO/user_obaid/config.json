@@ -1,0 +1,20 @@
+{
+  "image_size": 224,
+  "epochs": 500,
+  "lr": 0.001,
+  "weight_decay": 1e-05,
+  "dropout": 0.3,
+  "head_hidden": 128,
+  "freeze_backbone": true,
+  "backbone": "efficientnet_v2_s",
+  "classes": [
+    "fall",
+    "light",
+    "fan",
+    "curtain",
+    "screen",
+    "none"
+  ],
+  "seed": 3,
+  "tag": "LOSO_user_obaid"
+}
