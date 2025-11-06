@@ -1,0 +1,36 @@
+# Raspberry pi 5 terminal commands
+
+# Capture video
+rpicam-vid -t 5000 -o N1.mp4
+
+# Change directory to project folder
+cd ~/Project-Code
+
+# Running project video capture, process, predicted, and output code
+python VideoProcessTest.py \
+  --model_dir Models/Unified/Mixed/seed_100 \
+  --use_picam2 --preview \
+  --use_gpio --use_lcd 
+
+
+# Testing different model prediction latency timing and trained model
+seniorproject@raspberrypi5:~/Project-Code $ python TestingModelsTiming.py
+ShuffleNetV2 x1.0 float @224:  154.4 ms
+MNASNet 1.0 @224:              201.7 ms
+EfficientNet-B1 @224:          338.1 ms
+EfficientNet-B7 @224:          1336.1 ms
+EfficientNetV2-S @224:         597.4 ms
+EfficientNetV2-M @224:         1063.4 ms
+
+
+Logits: tensor([[ 3.4646, -1.6226, -3.2201, -0.3109, -0.9715, -2.3102]]) 
+
+Predicted class: fall  (confidence: 95.67%)
+Prediction time: 546.84 ms
+
+fall: 95.67%
+light: 0.59%
+fan: 0.12%
+curtain: 2.19%
+screen: 1.13%
+none: 0.30%
