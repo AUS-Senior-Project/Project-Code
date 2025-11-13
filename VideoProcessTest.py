@@ -69,7 +69,7 @@ def get_args():
     p.add_argument("--image_size", type=int, default=224, help="Model input size (should match training)")
     p.add_argument("--fall_thresh", type=float, default=0.50, help="Confidence to confirm FALL")
     p.add_argument("--gesture_thresh", type=float, default=0.60, help="Confidence to confirm gesture")
-    p.add_argument("--thresh_percentile", type=float, default=80.0, help="Percentile on non-zero diffs")
+    p.add_argument("--thresh_percentile", type=float, default=70.0, help="Percentile on non-zero diffs")
 
     # debug image
     p.add_argument("--save_debug", type=str, default="debug_motion.jpg", help="Where to save motion image; use .jpg to avoid libpng warnings",)
@@ -390,7 +390,7 @@ class Hardware:
             fall_notif()
             if self.screen_state:
                 self.lcd_print("ALERT: FALL", "")
-            for _ in range(5):
+            for _ in range(20):
                 self.led(True)
                 time.sleep(0.2)
                 self.led(False)
@@ -464,7 +464,7 @@ def draw_guides(img):
     return out
 
 
-def capture_frames_picam2(picam, duration_sec: float, width: int, height: int, fps: int, show_preview: bool):
+def capture_frames_picam2(picam, duration_sec: float, width: int, height: int, show_preview: bool):
     if not _PICAM2_OK:
         raise RuntimeError("Picamera2 requested but not available")
     if picam is None:
@@ -518,6 +518,40 @@ def fall_notif():
             to=number,
         )
         print(f"[Twilio] Message sent to {number}: {message.sid}")
+
+# =============================
+# Logging
+# =============================
+LOG_PATH = Path("logged_events.csv")
+
+
+def logger(conf_label: str,
+                  top_label: str,
+                  top_conf: float,
+                  latency_preproc_infer: float):
+    """
+    Append a single inference record to a CSV file.
+
+    Fields:
+      - timestamp (local)
+      - thresholded label (conf_label)
+      - top-1 raw label (top_label)
+      - top-1 confidence
+      - latency (preprocess + inference)
+    """
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Create file with header on first write
+    file_exists = LOG_PATH.exists()
+    line = f"{ts},{conf_label},{top_label},{top_conf:.4f},{latency_preproc_infer:.4f}\n"
+
+    try:
+        with open(LOG_PATH, "a", encoding="utf-8") as f:
+            if not file_exists:
+                f.write("timestamp,thresholded_label,top_label,top_confidence,preproc_infer_latency\n")
+            f.write(line)
+    except Exception as e:
+        print(f"[log] Failed to write log entry: {e}")
 
 
 # =============================
@@ -703,6 +737,14 @@ def main():
                 f"  Fan={hw.fan_state}"
                 f"  Curtain={hw.curtain_state}"
                 f"  Screen={hw.screen_state}"
+            )
+            
+            # --- Log result (date/time, labels, confidence, latency) ---
+            logger(
+                conf_label=conf_label,
+                top_label=top_label,
+                top_conf=top_conf,
+                latency_preproc_infer=(t5 - t2),
             )
 
     except KeyboardInterrupt:
